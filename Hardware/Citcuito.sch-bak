@@ -1017,9 +1017,9 @@ RTC_RST
 Text GLabel 7500 3000 0    50   Input ~ 0
 SD_SCK
 Text GLabel 7500 3100 0    50   Input ~ 0
-RTC_MOSI
+SD_MOSI
 Text GLabel 7500 3200 0    50   Input ~ 0
-RTC_MOSO
+SD_MOSO
 Text GLabel 7500 2900 0    50   Input ~ 0
 SD_CS
 $EndSCHEMATC
