@@ -48,17 +48,23 @@ MatrizBotoes::MatrizBotoes(int xPinos[], int xTamanho, int yPinos[],int yTamanho
   this->yTamanho = yTamanho;
   
   this->botoes = (bool*)malloc(xTamanho*yTamanho);
+  this->bufferBotoes = (bool*)malloc(xTamanho*yTamanho);
+
+  this->prontoParaLeitura = false;
   
   return;
   
 }
 
 void MatrizBotoes::logica(void){
-      
+
+  //Casso o valor anterior não seja lido não verifica o novo valor
+  if(this->prontoParaLeitura)return;
+  
   int indexBotao = 0;
 
   //Inicializando com os botoes com o valor 0
-  for(int i = 0; i < this->xTamanho*yTamanho; i++)this->botoes[i] = 0;
+  for(int i = 0; i < this->getQuantidadeDeTecla(); i++)this->botoes[i] = 0;
 
   //Configura a dinamica dos pinos
   configuracaoUm();
@@ -108,12 +114,26 @@ void MatrizBotoes::logica(void){
     
   }
   
+  this->prontoParaLeitura = true;
+  
 }
 
-bool MatrizBotoes::getBotao(int index){
+bool MatrizBotoes::getBotao(bool *botoes){
 
-  return this->botoes[index];
+  if(this->prontoParaLeitura){
+    
+    this->prontoParaLeitura = false;
+
+    for(int i = 0; i < this->getQuantidadeDeTecla(); i++)botoes[i] = this->botoes[i];
+    
+    return 1;
+    
+  }else return 0;
   
+}
+
+unsigned int MatrizBotoes::getQuantidadeDeTecla(void){
+  return this->xTamanho*this->yTamanho;
 }
 
 

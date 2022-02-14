@@ -18,6 +18,9 @@ class MatrizBotoes{
     //Array que armazena a informação de qual botão está precionado
     
     bool *botoes;
+    bool *bufferBotoes;
+
+    bool prontoParaLeitura;
 
     /*
       Configuração da função dos pinos para a verificação
@@ -42,8 +45,9 @@ class MatrizBotoes{
     
     void logica(void);
 
-    bool getBotao(int index);
-    
+    bool getBotao(bool *botoes);
+
+    unsigned int getQuantidadeDeTecla(void);
   
 };
 

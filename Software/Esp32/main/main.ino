@@ -1,4 +1,5 @@
 #include "perifericos.h"
+#include "esp_task_wdt.h"
 
 MatrizBotoes *teclado;
 Joystick *joystick;
@@ -6,6 +7,18 @@ Buzzer *buzzer;
 RGB *rgb;
 Analogico *infraVermelho;
 Analogico *luminosidade;
+
+TaskHandle_t tarefa1;
+
+void tarefa(void * pvParameters){
+  
+  while(1){
+    teclado->logica();
+    joystick->logica();
+    vTaskDelay(1);
+  }
+    
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -25,30 +38,42 @@ void setup() {
 
   infraVermelho = new Analogico(36);
   luminosidade = new Analogico(39);
+
+  xTaskCreatePinnedToCore(
+    tarefa,
+    "teclado",
+    1000,
+    NULL,
+    1,
+    &tarefa1,
+    0);
+
+  inicializaLCD();
   
 }
 
+
 void loop() {
-  // put your main code here, to run repeatedly:
 
-  teclado->logica();
-
-  Serial.printf("\n");
+  bool leitura[teclado->getQuantidadeDeTecla()];
   
-  for(int i = 0; i < 3*2; i++){
+  if(teclado->getBotao(leitura)){
 
-    Serial.printf("%d ",teclado->getBotao(i));
+    Serial.printf("\n");
     
-  }
+    for(int i = 0; i < teclado->getQuantidadeDeTecla();i++)Serial.printf("%d ",leitura[i]);
+  
+  }else for(int i = 0; i < teclado->getQuantidadeDeTecla();i++)leitura[i] = false;
 
-  joystick->logica();
-
-  Serial.printf(" D %d E %d C %d B %d BUTAO %d",
-                joystick->getDireita(),
-                joystick->getEsquerda(),
-                joystick->getCima(),
-                joystick->getBaixo(),
-                joystick->getBotao());
+  interface( leitura[0] || joystick->getEsquerda()  //Esquerda
+            ,leitura[2] || joystick->getDireita()   //Direita
+            ,leitura[1] || joystick->getCima()      //Cima
+            ,leitura[4] || joystick->getBaixo()     //Baixo
+            ,leitura[3]                             //Voltar
+            ,leitura[5] || joystick->getBotao()     //Enter
+            );
+  
+  /*
 
   if(joystick->getBotao())buzzer->setBip(125);
   else buzzer->setBip(0);
@@ -66,5 +91,5 @@ void loop() {
   }
 
   Serial.printf(" IR %d LUMIN %d", infraVermelho->getMedia(50), luminosidade->getMedia(50));
-  
+  */
 }
